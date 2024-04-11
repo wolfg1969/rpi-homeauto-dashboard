@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/chromium-browser --kiosk --incognito http://localhost/dashboard/index.html
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name=HomeDashboard

@@ -1,0 +1,261 @@
+body {
+/*  background-color: #000;*/
+  color: #FFFFFF;
+}
+
+body::after {
+  content: "";
+  background: var(--background);
+/*  opacity: 0.80;*/
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;   
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.info-card {
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
+  display: block;
+  height: 150px;
+  width: 100%;
+  margin-bottom: 5px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+.info-card.clock {
+  height: 170px;
+}
+
+.clock p.date {
+  font-size: 28px;
+  font-weight: 500;
+/*  text-shadow: 1px 1px 2px #D0D3D4;*/
+  padding: 12px 0 0 20px;
+}
+
+.clock p.time {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 72px;
+  /*margin-left: auto;
+  margin-right: auto;
+  width: 85%;*/
+  font-weight: 700;
+  text-shadow: 5px 5px 10px #616A6B;
+}
+
+.clock p.lunar-date {
+  text-align: right;
+  font-size: 20px;
+  padding: 20px 20px 0 0;
+  font-weight: 500;
+/*  text-shadow: 1px 1px 2px #D0D3D4;*/
+}
+
+.weather-icon {
+  -webkit-filter: brightness(0) invert(1);
+  filter: brightness(0) invert(1);
+}
+
+.info-card.weather.outdoor {
+/*  background: rgba(91, 44, 111, 0.69);*/
+  height: 300px;
+}
+
+.weather.outdoor > div {
+  /*display: inline-block;
+  width: 50%;*/
+  padding: 10px 30px;
+  vertical-align: middle;
+}
+
+.weather.outdoor .cond > img {
+/*  vertical-align: bottom;*/
+  width: 64px;
+}
+
+.weather.outdoor .cond > p {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.weather.outdoor .temp > p {
+  font-size: 30px;
+  font-weight: 500;
+  margin: 5px 0;
+  padding: 5px;
+  text-align: right;
+}
+
+.weather.outdoor .temp > p > span {
+  font-size: 18px;
+  vertical-align: top;
+  line-height: 1.1;
+}
+
+.weather.outdoor .temp > p.wind {
+  font-size: 20px;
+  margin-top: 15px;
+}
+
+.weather.outdoor .temp > p > i {
+  margin-left: 8px;
+}
+
+.weather.outdoor .forecast {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 0;
+/*  height: 120px;*/
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.weather.outdoor .forecast p {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0 0 5px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 120px;
+}
+
+.weather.outdoor .forecast img {
+  height: 32px;
+}
+
+.weather.indoor > p {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 5px 0;
+  padding: 5px;
+}
+
+.weather.indoor > p > span {
+  font-size: 14px;
+  vertical-align: top;
+  line-height: 1.1;
+}
+
+.note {
+  color: #ECF0F1;
+  text-align: right;
+  font-size: 12px;
+  padding: 0 12px 5px 0;
+}
+
+.info-card.aqi, .info-card.indoor.weather {
+  background: rgba(0, 0, 0, 0.7);
+  height: 160px;
+}
+
+.info-card.aqi > h6, .weather.indoor > h6, .info-card.class-schedule > h6 {
+  padding-top: 5px;
+  padding-bottom: 2px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #eef;
+}
+
+.info-card.aqi > p.aqiVal {
+  padding-top: 35px;
+  font-size: 50px;
+}
+
+.info-card.aqi > p.aqiText {
+  padding-top: 10px;
+  font-size: 22px;
+}
+
+.info-card.aqi.blue {
+  background: rgba(79, 195, 247, 0.85);
+}
+
+.info-card.aqi.green {
+  background: rgba(136, 191, 72, 0.85);
+}
+
+.info-card.aqi.orange {
+  background: rgba(246, 139, 1, 0.85);
+}
+
+.info-card.aqi.yellow {
+  background: rgba(223, 196, 43, 0.85);
+}
+
+.info-card.aqi.red {
+  background: rgba(229, 57, 53, 0.85);
+}
+
+.info-card.aqi.purple {
+  background: rgba(97, 78, 131, 0.85);
+}
+
+.info-card.aqi.black {
+  background: rgba(61, 60, 53, 0.85);
+}
+
+.info-card.aqi.maroon {
+  background: rgba(128, 0, 0, 0.85);
+}
+
+.info-card.class-schedule {
+  height: 100%;
+  background: rgba(0, 0, 0, 0.70);
+}
+
+.info-card.class-schedule > h6 {
+  padding-left: 10px;
+  font-size: 18px;
+}
+
+.info-card.class-schedule .chip {
+/*  font-size: 20px;*/
+  font-weight: 700;
+}
+
+.info-card.class-schedule .tip {
+  font-size: 24px;
+  font-weight: 700;
+/*  color: #808080;*/
+}
+
+.App {
+/*  text-align: center;*/
+/*  margin: 10px;*/
+  padding: 10px;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.columns {
+  margin-top: .2rem;
+  margin-bottom: .2rem;
+}
+

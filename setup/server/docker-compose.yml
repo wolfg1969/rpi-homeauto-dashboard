@@ -1,0 +1,10 @@
+version: "3"
+services:
+  http-server:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./public:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8083:80
