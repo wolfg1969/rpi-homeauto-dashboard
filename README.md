@@ -60,3 +60,7 @@ Exec=unclutter -idle 0.1
 * https://superuser.com/questions/461035/disable-google-chrome-session-restore-functionality
 * https://github.com/facebookincubator/create-react-app/issues/1094
 * https://forums.raspberrypi.com/viewtopic.php?t=11815
+
+![dashboard-screenshot](https://github.com/wolfg1969/rpi-homeauto-dashboard/assets/1585718/e0af8ab2-3f57-4a09-a076-a235170bb5e3)
+
+  
