@@ -18,7 +18,10 @@
 				"gamunu.vscode-yarn"
 			]
 		}
-	}
+	},
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/home/node/.ssh,type=bind,consistency=cached"
+	]
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "yarn install",
