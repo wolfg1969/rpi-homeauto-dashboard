@@ -1,7 +1,7 @@
 export const GET_OUTDOOR_AQI = 'GET_OUTDOOR_AQI';
 
-const location = process.env.REACT_APP_QWEATHER_LOCATION;
-const authKey = process.env.REACT_APP_QWEATHER_API_KEY;
+const location = process.env.QWEATHER_LOCATION;
+const authKey = process.env.QWEATHER_API_KEY;
 
 export const getOutdoorAQI = () => {
   return dispatch => {

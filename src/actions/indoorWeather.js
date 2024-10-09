@@ -1,13 +1,14 @@
 export const GET_INDOOR_WEATHER = 'GET_INDOOR_WEATHER';
 
-const deviceId = '95';
+const deviceId = process.env.REACT_APP_DOMOTICZ_INDOOR_WEATHER_DEVICE_ID;
+const authToken = btoa(process.env.REACT_APP_DOMOTICZ_API_CREDENTIALS)
 
 export const getIndoorWeather = () => {
   return dispatch => {
     
     fetch(`http://192.168.1.125:8080/json.htm?type=devices&rid=${deviceId}`, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+        'Authorization': `Basic ${authToken}`
       }
     }).then(
       results => results.json()
