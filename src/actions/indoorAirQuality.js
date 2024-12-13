@@ -6,7 +6,7 @@ const authToken = btoa(process.env.REACT_APP_DOMOTICZ_API_CREDENTIALS)
 export const getIndoorAQI = () => {
   return dispatch => {
     
-    fetch(`http://192.168.1.125:8080/json.htm?type=devices&rid=${deviceId}`, {
+    fetch(`http://192.168.1.125:8080/json.htm?type=command&param=getdevices&rid=${deviceId}`, {
       headers: {
         'Authorization': `Basic ${authToken}`
       }
