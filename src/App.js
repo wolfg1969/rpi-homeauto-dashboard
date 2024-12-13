@@ -92,7 +92,7 @@ class App extends Component {
             <ClassSchedule />
           </div>
         </div> */}
-        <div class="columns">
+        <div className="columns">
         <div className="column col-auto col-ml-auto">
           <span style={{position:'absolute', bottom: 10, right: 10}}>{this.props.bingWallpaper.title}</span>
         </div>
