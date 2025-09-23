@@ -1,22 +1,38 @@
 export const GET_INDOOR_WEATHER = 'GET_INDOOR_WEATHER';
 
-const deviceId = process.env.REACT_APP_DOMOTICZ_INDOOR_WEATHER_DEVICE_ID;
-const authToken = btoa(process.env.REACT_APP_DOMOTICZ_API_CREDENTIALS)
+const apiURL = process.env.REACT_APP_HA_API_URL;
+const haAPIAuthToken = process.env.REACT_APP_HA_API_TOKEN;
+
+const temperatureEntityID = process.env.REACT_APP_HA_INDOOR_TEMPERATURE_ENTITY_ID;
+const humidityEntityID = process.env.REACT_APP_HA_INDOOR_HUMIDITY_ENTITY_ID;
+const pressureEntityID = process.env.REACT_APP_HA_INDOOR_PRESSURE_ENTITY_ID;
 
 export const getIndoorWeather = () => {
   return dispatch => {
     
-    fetch(`http://192.168.1.125:8080/json.htm?type=command&param=getdevices&rid=${deviceId}`, {
+    fetch(`${apiURL}/template`, {
+      method: 'POST',
       headers: {
-        'Authorization': `Basic ${authToken}`
-      }
+        'Authorization': `Bearer ${haAPIAuthToken}`,
+        'Content-Type': 'application/json',
+        'Origin': '*'
+      },
+      body: JSON.stringify({
+        "template": `
+          {% set data = {} %}
+          {% set data = dict(data, **{'Temp': states('${temperatureEntityID}', rounded=True)}) %}
+          {% set data = dict(data, **{'Humidity': states('${humidityEntityID}', rounded=True)}) %}
+          {% set data = dict(data, **{'Barometer': states('${pressureEntityID}', rounded=True)}) %}
+          {% set data = dict(data, **{'LastUpdate': as_local(states.sensor.weatherstation_livingroom_temperature.last_changed).strftime('%Y-%m-%d %H:%M:%S') }) %}
+          {{data|tojson}}
+        `
+      })
     }).then(
       results => results.json()
     ).then(
-      data => data.result[0]
-    ).then(
       data => {
-        const { Sunrise, Sunset, Temp, Humidity, HumidityStatus, Barometer, LastUpdate } = data;
+        // console.log(data)
+        const { Temp, Humidity, HumidityStatus, Barometer, LastUpdate } = data;
         
         dispatch({ 
           type: GET_INDOOR_WEATHER,

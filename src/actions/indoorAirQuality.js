@@ -1,19 +1,29 @@
 export const GET_INDOOR_AQI = 'GET_INDOOR_AQI';
 
-const deviceId = process.env.REACT_APP_DOMOITCZ_INDOOR_AQI_DEVICE_ID;
-const authToken = btoa(process.env.REACT_APP_DOMOTICZ_API_CREDENTIALS)
+const apiURL = process.env.REACT_APP_HA_API_URL;
+const haAPIAuthToken = process.env.REACT_APP_HA_API_TOKEN;
+const aqiEntityID = process.env.REACT_APP_HA_INDOOR_AQI_ENTITY_ID;
 
 export const getIndoorAQI = () => {
   return dispatch => {
     
-    fetch(`http://192.168.1.125:8080/json.htm?type=command&param=getdevices&rid=${deviceId}`, {
+    fetch(`${apiURL}/template`, {
+      method: 'POST',
       headers: {
-        'Authorization': `Basic ${authToken}`
-      }
+        'Authorization': `Bearer ${haAPIAuthToken}`,
+        'Content-Type': 'application/json',
+        'Origin': '*'
+      },
+      body: JSON.stringify({
+        "template": `
+          {% set data = {} %}
+          {% set data = dict(data, **{'Data': states('${aqiEntityID}', rounded=True, with_unit=True)}) %}
+          {% set data = dict(data, **{'LastUpdate': as_local(states.sensor.weatherstation_livingroom_temperature.last_changed).strftime('%Y-%m-%d %H:%M:%S') }) %}
+          {{data|tojson}}
+        `
+      })
     }).then(
       results => results.json()
-    ).then(
-      data => data.result[0]
     ).then(
       data => {
         const { Data, LastUpdate } = data;

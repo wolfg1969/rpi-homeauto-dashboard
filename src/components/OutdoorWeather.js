@@ -14,7 +14,7 @@ class OutdoorWeather extends Component {
     const { now, dailyForecast } = this.props.outdoorWeather;
 
     const { code, now: nowData } = now;
-    
+
     if (code !== '200') {
       return null
     }
@@ -45,7 +45,7 @@ class OutdoorWeather extends Component {
             
             let unit = '级';
             
-            if (isNaN(parseInt(windLevelHigh))) {
+            if (isNaN(parseInt(windLevelHigh, 10))) {
               unit = '';
             }
           

@@ -9,7 +9,7 @@ class AirQuality extends Component {
   render() {
     const { title, aqi, aqiText, aqiData, lastUpdate } = this.props;
 
-    if (aqiData) {
+    if (aqiData) { // outdoor
       const aqiClassName = getChinaAqiClassName(aqi);
       return (
         <div className={`info-card aqi text-center ${aqiClassName}`}>
@@ -68,9 +68,7 @@ AirQuality.propTypes = {
 };
 
 const mapStateToProps = state => {
-  return {
-    outdoorWeather: state.outdoorWeather,
-  };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch) => {
