@@ -23,25 +23,27 @@ body::after {
   background: rgba(0, 0, 0, 0.45);
   border-radius: 10px;
   display: block;
-  height: 150px;
+  /* height: 150px; */
   width: 100%;
   margin-bottom: 5px;
   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }
 
-.info-card.clock {
+/* .info-card.clock {
   height: 170px;
-}
+} */
 
 .clock p.date {
   font-size: 28px;
   font-weight: 500;
 /*  text-shadow: 1px 1px 2px #D0D3D4;*/
   padding: 12px 0 0 20px;
+  margin-bottom: 0;
 }
 
 .clock p.time {
-  margin-top: 40px;
+  /* margin-top: 40px; */
+  margin-bottom: 0;
   text-align: center;
   font-size: 72px;
   /*margin-left: auto;
@@ -54,8 +56,9 @@ body::after {
 .clock p.lunar-date {
   text-align: right;
   font-size: 20px;
-  padding: 20px 20px 0 0;
+  padding: 10px 20px 0 0;
   font-weight: 500;
+  margin-bottom: 0;
 /*  text-shadow: 1px 1px 2px #D0D3D4;*/
 }
 
@@ -64,15 +67,14 @@ body::after {
   filter: brightness(0) invert(1);
 }
 
-.info-card.weather.outdoor {
-/*  background: rgba(91, 44, 111, 0.69);*/
+/* .info-card.weather.outdoor {
   height: 300px;
-}
+} */
 
 .weather.outdoor > div {
   /*display: inline-block;
   width: 50%;*/
-  padding: 10px 30px;
+  padding: 0 30px;
   vertical-align: middle;
 }
 
@@ -111,9 +113,8 @@ body::after {
 
 .weather.outdoor .forecast {
   width: 95%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-bottom: 0;
+  margin: 0 auto;
+  padding: 5px 5px 5px 0;
 /*  height: 120px;*/
   background: rgba(0, 0, 0, 0.5);
 }
@@ -135,12 +136,12 @@ body::after {
 .weather.indoor > p {
   font-size: 20px;
   font-weight: 500;
-  margin: 5px 0;
-  padding: 5px;
+  margin: 0;
+  padding: 2px;
 }
 
 .weather.indoor > p > span {
-  font-size: 10px;
+  font-size: 9px;
   vertical-align: middle;
   line-height: 1.1;
 }
@@ -149,12 +150,14 @@ body::after {
   color: #ECF0F1;
   text-align: right;
   font-size: 12px;
-  padding: 0 12px 5px 0;
+  padding: 2px 12px 2px 0;
+  margin-bottom: 0;
 }
 
 .info-card.aqi, .info-card.indoor.weather {
   background: rgba(0, 0, 0, 0.7);
-  height: 160px;
+  height: 150px;
+  margin: 5px 2px 15px 2px;
 }
 
 .info-card.aqi > h6, .weather.indoor > h6, .info-card.class-schedule > h6 {
@@ -164,9 +167,18 @@ body::after {
   border-bottom: 1px solid #eef;
 }
 
+.info-card.aqi > .h2, .weather.indoor > .h2 {
+  margin: 0;
+}
+
+.info-card.aqi > .h5, .weather.indoor > .h5 {
+  margin: 0;
+}
+
 .info-card.aqi > p.aqiVal {
-  padding-top: 35px;
+  /* padding-top: 35px; */
   font-size: 50px;
+  margin: 0;
 }
 
 .info-card.aqi > p.aqiText {
@@ -257,5 +269,9 @@ body::after {
 .columns {
   margin-top: .2rem;
   margin-bottom: .2rem;
+}
+
+.btn-fill {
+  width: 100%;
 }
 

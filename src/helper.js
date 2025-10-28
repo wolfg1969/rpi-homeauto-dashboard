@@ -1,5 +1,5 @@
 export const getAqiClassName = (aqi) => {
-  
+
   if (aqi >= 0 && aqi < 36) {
     return "blue"
   } else if (aqi >= 36 && aqi < 76) {
@@ -25,7 +25,7 @@ export const getChinaAqiClassName = (aqi) => {
   } else if (aqi >= 51 && aqi <= 100) {
     return "yellow"
   } else if (aqi >= 101 && aqi <= 150) {
-    return "oragne"
+    return "orange"
   } else if (aqi >=151 && aqi <= 200) {
     return "red" 
   } else if (aqi >=201 && aqi <= 300) {

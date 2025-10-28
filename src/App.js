@@ -16,6 +16,8 @@ import { getOutdoorWeather } from './actions/outdoorWeather';
 import { getBingWallpaper } from './actions/bingWallpaper'
 import { tick } from './actions/clock';
 
+const apiURL = process.env.REACT_APP_HA_API_URL;
+
 class App extends Component {
   
   componentWillMount() {
@@ -37,6 +39,12 @@ class App extends Component {
     // setInterval(() => this.props.getClassSchedule(), 1000 * 60 * 45); // every 45 minutes
     setInterval(() => this.props.getBingWallpaper(), 1000 * 60 * 60 * 12); // every 12 hours
   }
+
+  triggerHAWebhook(hookName) {
+    fetch(`${apiURL}/webhook/${hookName}`, {
+      method: 'POST'
+    })
+  }
   
   render() {
     return (
@@ -45,16 +53,10 @@ class App extends Component {
         <div className="columns">
           <div className="column col-12">
             <Clock />
-          </div> 
-        </div>
-      
-        <div className="columns">
+          </div>
           <div className="column col-12">
             <OutdoorWeather />
-          </div> 
-        </div>
-      
-        <div className="columns col-oneline">
+          </div>
           <div className="column col-4">
             {
               (() => {
@@ -69,7 +71,6 @@ class App extends Component {
                 return <AirQuality title="室外空气质量" aqi={aqi} aqiText={category} aqiData={now} />
               })()
             }
-            
           </div>
       
           <div className="column col-4">
@@ -85,18 +86,23 @@ class App extends Component {
           <div className="column col-4">
             <IndoorWeather />
           </div>
+
+          <div className="column col-6 text-center">
+            <button className="btn btn-primary btn-lg btn-fill" onClick={() => this.triggerHAWebhook('turn_off_all_lights')}>一键关灯</button>
+          </div>
+          <div className="column col-6 text-center">
+            <button className="btn btn-success btn-lg btn-fill" onClick={() => this.triggerHAWebhook('toggle_door_light')}>玄关灯</button>
+          </div>
+
+          <div className="column col-auto col-ml-auto">
+            <span style={{position:'absolute', bottom: 10, right: 10}}>{this.props.bingWallpaper.title}</span>
+          </div>
         </div>
-            
         {/* <div className="columns">
           <div className="column col-12">
             <ClassSchedule />
           </div>
         </div> */}
-        <div className="columns">
-        <div className="column col-auto col-ml-auto">
-          <span style={{position:'absolute', bottom: 10, right: 10}}>{this.props.bingWallpaper.title}</span>
-        </div>
-        </div>
       
       </div>
     );
