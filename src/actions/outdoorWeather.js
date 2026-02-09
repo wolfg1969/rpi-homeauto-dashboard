@@ -23,7 +23,7 @@ export const getOutdoorWeather = () => {
     //     }
     //   })
     // })
-    fetch(
+    const weatherPromise = fetch(
       `${apiURL}/states/${weatherEntityID}`, {
       method: 'GET',
       headers: {
@@ -31,10 +31,25 @@ export const getOutdoorWeather = () => {
         'Content-Type': 'application/json',
         'Origin': '*'
       }
-    }).then(
-      results => results.json()
-    ).then(
-      data => {
+    }).then(response => response.json());
+
+    const forecastPromise = fetch(
+      `${apiURL}/services/weather/get_forecasts?return_response`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${haAPIAuthToken}`,
+        'Content-Type': 'application/json',
+        'Origin': '*'
+      },
+      body: JSON.stringify({
+        entity_id: weatherEntityID,
+        type: 'daily'
+      })
+    }).then(response => response.json());
+
+    Promise.all([weatherPromise,forecastPromise]).then(
+      ([weatherData, forecastData]) => {
+
         const { 
           qweather_icon: icon, 
           condition_cn: text, 
@@ -46,19 +61,19 @@ export const getOutdoorWeather = () => {
           winddir: windDir,
           windscale: windScale,
           wind_speed: windSpeed,
-          last_updated: updateTime,
-          daily_forecast
-        } = data.attributes;
+          last_updated: updateTime
+        } = weatherData.attributes;
 
-        let daily_data = []
-        daily_forecast.map(item => {
+        const { forecast: daily_forecast } = forecastData.service_response["weather.tian_qi"];
+        let daily_data = [];
+        daily_forecast.forEach(item => {
           const {
             text: textDay, 
             textnight: textNight, 
             icon: iconDay, 
             iconnight: iconNight,
-            native_temp_low: tempMin,
-            native_temperature: tempMax,
+            templow: tempMin,
+            temperature: tempMax,
           } = item;
           daily_data.push({
             textDay, 
@@ -69,7 +84,7 @@ export const getOutdoorWeather = () => {
             tempMax,
             moonPhaseIcon: '',  // unavailable
           })
-        })
+        });
 
         dispatch({ 
           type: GET_OUTDOOR_WEATHER,
@@ -95,8 +110,8 @@ export const getOutdoorWeather = () => {
               daily: daily_data.slice(0, 3)
             }
           }
-        })
+        });
       }
-    )
-  }
+    );
+  };
 };
