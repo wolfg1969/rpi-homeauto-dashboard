@@ -26,9 +26,7 @@ xinput --set-prop 'FT5406 memory based driver' 'Coordinate Transformation Matrix
 # 0 -1 1 1 0 0 0 0 1 # 90 degrees left
 ```
 
-~~~```/etc/rc.local``` 添加上面的 xinput 命令以支持竖屏。~~~
-
-~/.local/bin/run-dashboard.sh
+```~/.local/bin/run-dashboard.sh```
 ```
 #!/bin/bash
 xinput --set-prop \
