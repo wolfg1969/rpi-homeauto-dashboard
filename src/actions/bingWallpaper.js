@@ -1,11 +1,12 @@
 export const GET_BING_WALLPAPER = 'GET_BING_WALLPAPER';
 
 const bingHostURL = 'https://cn.bing.com';
+const bingWallpaperProxyURL = process.env.REACT_APP_BING_WALLPAPER_PROXY_URL || 'http://127.0.0.1/bing_wallpaper_proxy/';
 
 export const getBingWallpaper = () => {
   return dispatch => {
-    
-    fetch(`http://start.home.lan:8083/proxy/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN`, {
+
+    fetch(`${bingWallpaperProxyURL}HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN`, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-cache',

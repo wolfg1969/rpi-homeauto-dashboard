@@ -46,12 +46,23 @@ npm run build
 
 构建产物位于 `build/` 目录（`package.json` 中 `homepage` 为 `"./"`）。
 
-> 必应壁纸代理地址在 [src/actions/bingWallpaper.js](src/actions/bingWallpaper.js) 中硬编码为 `http://start.home.lan:8083/proxy/`，服务器地址或端口不同时需同时修改该文件。
+> 必应壁纸代理地址可通过环境变量 `REACT_APP_BING_WALLPAPER_PROXY_URL` 配置，默认值为 `http://127.0.0.1/bing_wallpaper_proxy/`。
 >
 > 页面底部的「一键关灯」「玄关灯」按钮会调用 HA webhook：`turn_off_all_lights`、`toggle_door_light`，需要在 HA 中创建同名自动化。
 
 服务端配置（可以在同一个树莓派上运行）：
 Nginx 正向代理配置用于获取必应壁纸，避免 CORS 错误；发布 React 应用。
+
+```
+location /bing_wallpaper_proxy/ {
+    rewrite ^/bing_wallpaper_proxy/(.*)$ /$1 break;
+    proxy_pass https://cn.bing.com;
+
+    add_header 'Access-Control-Allow-Origin' '*';
+    add_header 'Access-Control-Allow-Headers' '*';
+    add_header 'Access-Control-Allow-Methods' 'GET,OPTIONS';
+}
+```
 
 树莓派配置：
 
