@@ -20,7 +20,8 @@
 		}
 	},
 	"mounts": [
-		"source=${localEnv:HOME}/.ssh,target=/home/node/.ssh,type=bind,consistency=cached"
+		"source=${localEnv:HOME}/.ssh,target=/home/node/.ssh,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.claude,target=/home/node/.claude,type=bind,consistency=cached"
 	]
 
 	// Use 'postCreateCommand' to run commands after the container is created.
