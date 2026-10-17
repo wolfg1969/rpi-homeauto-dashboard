@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 class AirQuality extends Component {
   
   render() {
-    const { title, aqi, aqiText, aqiData, lastUpdate } = this.props;
+    const { title, aqi, aqiText, aqiData, lastUpdate, isStale } = this.props;
 
     if (aqiData) { // outdoor
       const aqiClassName = getChinaAqiClassName(aqi);
@@ -46,7 +46,13 @@ class AirQuality extends Component {
           }
           {
             (() => {
-              if (lastUpdate) {
+              if (isStale) {
+                return (
+                  <p className="p-1 aqi-stale">
+                    <small>离线{lastUpdate ? ` · 上次更新 ${lastUpdate}` : ' · 暂无数据'}</small>
+                  </p>
+                )
+              } else if (lastUpdate) {
                 return <p className="p-1"><small>{lastUpdate}</small></p>
               } else {
                 return null
@@ -65,6 +71,7 @@ AirQuality.propTypes = {
   aqiText: PropTypes.string,
   aqiData: PropTypes.any,
   lastUpdate: PropTypes.any,
+  isStale: PropTypes.bool,
 };
 
 const mapStateToProps = state => {

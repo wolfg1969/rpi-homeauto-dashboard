@@ -76,9 +76,9 @@ class App extends Component {
           <div className="column col-4">
             {
               (() => {
-                const { Data, LastUpdate } = this.props.indoorAirQuality;
+                const { Data, LastUpdate, isStale } = this.props.indoorAirQuality;
                 const aqiVal = Data.split(' ')[0]
-                return <AirQuality title="室内空气质量" aqi={aqiVal} aqiText="" lastUpdate={LastUpdate} />
+                return <AirQuality title="室内空气质量" aqi={aqiVal} aqiText="" lastUpdate={LastUpdate} isStale={isStale} />
               })()
             }
           </div>

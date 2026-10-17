@@ -186,6 +186,15 @@ body::after {
   font-size: 22px;
 }
 
+.info-card.aqi > p.aqi-stale {
+  margin: 0;
+}
+
+.info-card.aqi > p.aqi-stale small {
+  color: #FFE082;
+  font-weight: 600;
+}
+
 .info-card.aqi.blue {
   background: rgba(79, 195, 247, 0.85);
 }
