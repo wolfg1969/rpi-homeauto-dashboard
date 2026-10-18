@@ -4,8 +4,13 @@ import { getAqiClassName, getChinaAqiClassName } from '../helper'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+const isUnavailableValue = (value) => {
+  const token = String(value || '').trim().split(/\s+/)[0];
+  return token === '' || !Number.isFinite(Number(token));
+};
+
 class AirQuality extends Component {
-  
+
   render() {
     const { title, aqi, aqiText, aqiData, lastUpdate, isStale } = this.props;
 
@@ -25,16 +30,17 @@ class AirQuality extends Component {
               }
             })()
           }
-          
+
         </div>
       )
 
     } else {
       const aqiClassName = getAqiClassName(aqi);
+      const offline = isUnavailableValue(aqi);
       return (
         <div className={`info-card aqi text-center ${aqiClassName}`}>
           <h6>{title}</h6>
-          <p className="aqiVal">{aqi}</p>
+          <p className={`aqiVal ${offline ? 'aqiVal-offline' : ''}`}>{offline ? '—' : aqi}</p>
           {
             (() => {
               if (aqiText) {

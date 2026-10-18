@@ -181,6 +181,10 @@ body::after {
   margin: 0;
 }
 
+.info-card.aqi > p.aqiVal.aqiVal-offline {
+  font-size: 36px;
+}
+
 .info-card.aqi > p.aqiText {
   padding-top: 10px;
   font-size: 22px;
