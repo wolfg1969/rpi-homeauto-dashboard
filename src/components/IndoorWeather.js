@@ -6,7 +6,7 @@ class IndoorWeather extends Component {
   
   render() {
     
-    const { Temp, Humidity, HumidityStatus, Barometer } = this.props.indoorWeather;
+    const { Temp, Humidity, /*HumidityStatus,*/ Barometer } = this.props.indoorWeather;
     
     return (
       <div className="info-card weather indoor text-center">

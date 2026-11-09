@@ -3,7 +3,7 @@ import './App.css';
 import React, { Component } from 'react';
 
 import AirQuality  from './components/AirQuality';
-import ClassSchedule from './components/ClassSchedule';
+// import ClassSchedule from './components/ClassSchedule';
 import Clock from './components/Clock';
 import IndoorWeather from './components/IndoorWeather';
 import OutdoorWeather from './components/OutdoorWeather';
@@ -66,7 +66,7 @@ class App extends Component {
                   return null
                 }
                 
-                const { aqi, pm10, pm25, category } = now;
+                const { aqi, /*pm10, pm25,*/ category } = now;
                 
                 return <AirQuality title="室外空气质量" aqi={aqi} aqiText={category} aqiData={now} />
               })()

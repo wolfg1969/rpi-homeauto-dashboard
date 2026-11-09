@@ -39,7 +39,7 @@ class OutdoorWeather extends Component {
         {
           (() => {
           
-            const { humidity, pressure, temp, feelsLike, wind360, windDir, windScale, windSpeed } = nowData;
+            const { humidity, pressure, pressureUnit, temp, tempUnit, feelsLike, windDir, windScale } = nowData;
             
             const windLevelHigh = windScale.substring(windScale.lastIndexOf('-')+1);
             
@@ -52,11 +52,11 @@ class OutdoorWeather extends Component {
             return (
               <div className="temp column col-9">
                 <p>
-                  <i className="wi wi-thermometer"></i>{temp}<span>&#x2103;</span> <small>{feelsLike}<span>&#x2103;</span></small>
+                  <i className="wi wi-thermometer"></i>{temp}<span>{tempUnit}</span> <small>{feelsLike}<span>{tempUnit}</span></small>
                   <i className="wi wi-humidity"></i> {humidity} <span>%</span>
                 </p>
                 <p className="wind">
-                  <i className="wi wi-barometer"></i> {pressure} <span>hPa</span> 
+                  <i className="wi wi-barometer"></i> {pressure} <span>{pressureUnit}</span> 
                   <i className={`wi wi-wind-beaufort-${windLevelHigh}`}></i> <span>{`${windDir} ${windScale}${unit}`}</span>
                 </p>
               </div>
@@ -64,7 +64,20 @@ class OutdoorWeather extends Component {
           })()
         }
         </div>
-      
+        <div className="columns col-oneline col-gapless">
+          {
+            (() => {
+              const { forecastHourly } = nowData;
+            
+              return (
+                <div className="forecast-hourly text-center column col-12">
+                  <small>{forecastHourly}</small>
+                </div>
+              )
+            })()
+          }
+        </div>
+        
         <div className="forecast columns col-oneline">
         {
           (() => {
