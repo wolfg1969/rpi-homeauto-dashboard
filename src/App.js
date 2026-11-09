@@ -45,10 +45,17 @@ class App extends Component {
       method: 'POST'
     })
   }
-  
+
+  reloadPage(event) {
+    if (event.target.closest('button')) {
+      return;
+    }
+    window.location.reload();
+  }
+
   render() {
     return (
-      <div className="App container">
+      <div className="App container" onDoubleClick={event => this.reloadPage(event)}>
       
         <div className="columns">
           <div className="column col-12">
