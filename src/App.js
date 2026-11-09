@@ -87,10 +87,13 @@ class App extends Component {
             <IndoorWeather />
           </div>
 
-          <div className="column col-6 text-center">
+          <div className="column col-4 text-center">
             <button className="btn btn-primary btn-lg btn-fill" onClick={() => this.triggerHAWebhook('turn_off_all_lights')}>一键关灯</button>
           </div>
-          <div className="column col-6 text-center">
+          <div className="column col-4 text-center">
+            <button className="btn btn-error btn-lg btn-fill" onClick={() => this.triggerHAWebhook('turn_on_main_lights')}>一键开灯</button>
+          </div>
+          <div className="column col-4 text-center">
             <button className="btn btn-success btn-lg btn-fill" onClick={() => this.triggerHAWebhook('toggle_door_light')}>玄关灯</button>
           </div>
 
