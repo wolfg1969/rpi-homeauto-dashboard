@@ -113,12 +113,12 @@ body::after {
   margin-left: 8px;
 }
 
-.weather.outdoor .forecast-hourly {
-  margin-bottom: 5px;
-  padding-top: 0;
+.weather.outdoor .summary {
+  margin: 0 0 5px 0;
+  padding: 0 5px;
 }
 
-.weather.outdoor .forecast-hourly > small {
+.weather.outdoor .summary > div {
   color: rgb(255, 255, 0);
 }
 

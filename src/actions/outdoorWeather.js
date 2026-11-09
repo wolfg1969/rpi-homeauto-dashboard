@@ -53,7 +53,8 @@ export const getOutdoorWeather = () => {
         const { 
           qweather_icon: icon, 
           condition_cn: text, 
-          forecast_hourly: forecastHourly,
+          hourly_summary: hourlySummary,
+          minutely_summary: minutelySummary,
           humidity,
           pressure,
           pressure_unit: pressureUnit,
@@ -97,7 +98,8 @@ export const getOutdoorWeather = () => {
               now: {
                 icon,
                 text,
-                forecastHourly,
+                hourlySummary,
+                minutelySummary,
                 humidity, 
                 pressure, 
                 pressureUnit,

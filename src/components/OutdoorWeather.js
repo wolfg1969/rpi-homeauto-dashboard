@@ -64,14 +64,14 @@ class OutdoorWeather extends Component {
           })()
         }
         </div>
-        <div className="columns col-oneline col-gapless">
+        <div className="summary columns col-oneline col-gapless">
           {
             (() => {
-              const { forecastHourly } = nowData;
+              const { hourlySummary, minutelySummary } = nowData;
             
               return (
-                <div className="forecast-hourly text-center column col-12">
-                  <small>{forecastHourly}</small>
+                <div className="column col-12">
+                  <small>{hourlySummary}{minutelySummary}</small>
                 </div>
               )
             })()
