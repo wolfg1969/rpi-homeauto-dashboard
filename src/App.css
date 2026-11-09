@@ -1,6 +1,13 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
 /*  background-color: #000;*/
   color: #FFFFFF;
+  overflow: hidden;
 }
 
 body::after {
@@ -95,6 +102,7 @@ body::after {
   margin: 5px 0;
   padding: 5px;
   text-align: right;
+  white-space: nowrap;
 }
 
 .weather.outdoor .temp > p > span {
@@ -107,6 +115,7 @@ body::after {
   font-size: 20px;
   margin-top: 5px;
   margin-bottom: 0;
+  white-space: nowrap;
 }
 
 .weather.outdoor .temp > p > i {
@@ -116,6 +125,7 @@ body::after {
 .weather.outdoor .summary {
   margin: 0 0 5px 0;
   padding: 0 5px;
+  line-height: 1.1;
 }
 
 .weather.outdoor .summary > div {
@@ -300,3 +310,18 @@ body::after {
   width: 100%;
 }
 
+/* 480x800 等窄屏：缩小室外天气温度/风力文字，避免换行 */
+@media (max-width: 600px) {
+  .weather.outdoor .temp > p {
+    font-size: 26px;
+    padding: 5px 2px;
+  }
+
+  .weather.outdoor .temp > p.wind {
+    font-size: 17px;
+  }
+
+  .weather.outdoor .temp > p > i {
+    margin-left: 5px;
+  }
+}

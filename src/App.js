@@ -19,7 +19,15 @@ import { tick } from './actions/clock';
 const apiURL = process.env.REACT_APP_HA_API_URL;
 
 class App extends Component {
-  
+
+  constructor(props) {
+    super(props);
+    this.state = { scale: 1 };
+    this.appEl = null;
+    this.setAppRef = this.setAppRef.bind(this);
+    this.measureScale = this.measureScale.bind(this);
+  }
+
   componentWillMount() {
     this.props.tick();
     this.props.getOutdoorWeather();
@@ -38,6 +46,48 @@ class App extends Component {
     setInterval(() => this.props.getIndoorWeather(), 1000 * 60 * 5); // every 5 minutes
     // setInterval(() => this.props.getClassSchedule(), 1000 * 60 * 45); // every 45 minutes
     setInterval(() => this.props.getBingWallpaper(), 1000 * 60 * 60 * 12); // every 12 hours
+
+    this.measureScale();
+    window.addEventListener('resize', this.measureScale);
+    if (this.appEl && typeof window.ResizeObserver !== 'undefined') {
+      this.resizeObserver = new window.ResizeObserver(this.measureScale);
+      this.resizeObserver.observe(this.appEl);
+    }
+  }
+
+  componentDidUpdate() {
+    this.measureScale();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.measureScale);
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+  }
+
+  setAppRef(el) {
+    this.appEl = el;
+  }
+
+  // 等比缩放整个页面，保证在任意分辨率的屏幕上都能一页显示、不出现滚动条。
+  measureScale() {
+    if (!this.appEl) {
+      return;
+    }
+
+    const availableHeight = window.innerHeight;
+    const contentHeight = this.appEl.offsetHeight;
+
+    if (!availableHeight || !contentHeight) {
+      return;
+    }
+
+    const scale = Math.min(1, availableHeight / contentHeight);
+
+    if (Math.abs(scale - this.state.scale) > 0.001) {
+      this.setState({ scale });
+    }
   }
 
   triggerHAWebhook(hookName) {
@@ -55,7 +105,12 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App container" onDoubleClick={event => this.reloadPage(event)}>
+      <div
+        className="App container"
+        ref={this.setAppRef}
+        style={{ transform: `scale(${this.state.scale})`, transformOrigin: 'top center' }}
+        onDoubleClick={event => this.reloadPage(event)}
+      >
       
         <div className="columns">
           <div className="column col-12">
@@ -104,8 +159,8 @@ class App extends Component {
             <button className="btn btn-success btn-lg btn-fill" onClick={() => this.triggerHAWebhook('toggle_door_light')}>玄关灯</button>
           </div>
 
-          <div className="column col-auto col-ml-auto">
-            <span style={{position:'absolute', bottom: 10, right: 10}}>{this.props.bingWallpaper.title}</span>
+          <div className="column col-12 text-right wallpaper-title">
+            <span>{this.props.bingWallpaper.title}</span>
           </div>
         </div>
         {/* <div className="columns">
