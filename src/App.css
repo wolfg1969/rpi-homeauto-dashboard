@@ -128,8 +128,17 @@ body::after {
   line-height: 1.1;
 }
 
-.weather.outdoor .summary > div {
+.weather.outdoor .summary > div > small {
+  font-weight: 700;
+  padding: 0;
+}
+
+small.summary {
   color: rgb(255, 255, 0);
+}
+
+small.warning {
+  color: rgb(255, 0, 0);
 }
 
 .weather.outdoor .forecast {

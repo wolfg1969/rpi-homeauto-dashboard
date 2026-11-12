@@ -67,11 +67,17 @@ class OutdoorWeather extends Component {
         <div className="summary columns col-gapless">
           {
             (() => {
-              const { hourlySummary, minutelySummary } = nowData;
+              const { hourlySummary, minutelySummary, warning } = nowData;
             
               return (
                 <div className="column col-12">
-                  <small>{hourlySummary}{minutelySummary}</small>
+                  <small className="summary">{minutelySummary}。</small>
+                  <small className="summary">{hourlySummary}</small>
+                  {
+                    (warning || []).map((item, index) => (
+                      <small className="warning" key={index}>{item.typeName}{item.level}预警。</small>
+                    ))
+                  }
                 </div>
               )
             })()

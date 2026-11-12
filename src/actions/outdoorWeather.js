@@ -51,21 +51,22 @@ export const getOutdoorWeather = () => {
       ([weatherData, forecastData]) => {
 
         const { 
-          qweather_icon: icon, 
-          condition_cn: text, 
+          condition_cn: text,
+          feels_like: feelsLike,
           hourly_summary: hourlySummary,
-          minutely_summary: minutelySummary,
           humidity,
+          last_updated: updateTime,
+          minutely_summary: minutelySummary,
           pressure,
           pressure_unit: pressureUnit,
+          qweather_icon: icon, 
           temperature: temp,
           temperature_unit: tempUnit,
-          feels_like: feelsLike,
-          wind_bearing: wind360,
+          warning,
           winddir: windDir,
           windscale: windScale,
-          wind_speed: windSpeed,
-          last_updated: updateTime
+          wind_bearing: wind360,
+          wind_speed: windSpeed
         } = weatherData.attributes;
 
         const { forecast: daily_forecast } = forecastData.service_response["weather.tian_qi"];
@@ -96,16 +97,17 @@ export const getOutdoorWeather = () => {
             now: {
               code: '200',
               now: {
+                feelsLike, 
                 icon,
-                text,
                 hourlySummary,
-                minutelySummary,
                 humidity, 
+                minutelySummary,
                 pressure, 
                 pressureUnit,
                 temp, 
                 tempUnit,
-                feelsLike, 
+                text,
+                warning,
                 wind360, 
                 windDir, 
                 windScale, 
