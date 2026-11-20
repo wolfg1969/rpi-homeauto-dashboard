@@ -7,7 +7,7 @@
 树莓派触摸屏家庭自动化仪表盘。显示时钟/农历、室内外天气、室内外空气质量，并提供灯光控制按钮。
 
 - 技术栈：React 15 + Redux + redux-thunk，Create React App（`react-scripts` 1.0.13）
-- 数据来源：Home Assistant REST API（不再使用 QWeather / Domoticz，旧代码仅以注释保留）
+- 数据来源：Home Assistant REST API；室外天气、空气质量与天气预警均来自 `qweather_pro` 集成提供的天气实体和传感器（不再使用 QWeather / Domoticz，旧代码仅以注释保留）
 - 壁纸：Bing 每日壁纸，通过 nginx 反向代理获取（避免 CORS）
 - 界面文案为中文
 - 无 TypeScript、无 hooks（React 15 不支持），组件均为 class component
@@ -33,12 +33,16 @@ npm run eject        # 不要执行
 | `REACT_APP_HA_API_URL` | HA REST API 根地址，必须包含 `/api`，例如 `http://homeassistant.local:8123/api` |
 | `REACT_APP_HA_API_TOKEN` | HA 长期访问令牌，所有请求使用 `Authorization: Bearer <token>` |
 | `REACT_APP_HA_WEATHER_ENTITY_ID` | 室外天气实体（`weather.*`） |
+| `REACT_APP_HA_AIR_QUALITY_ENTITY_ID` | 室外空气质量传感器（`sensor.*`，使用 `aqi_value` / `primary_pollutant` 属性） |
+| `REACT_APP_HA_WEATHER_WARNINGS_ENTITY_ID` | 天气预警传感器（`sensor.*`，使用 `text` 属性） |
 | `REACT_APP_HA_INDOOR_AQI_ENTITY_ID` | 室内空气质量传感器（`sensor.*`） |
 | `REACT_APP_HA_INDOOR_TEMPERATURE_ENTITY_ID` | 室内温度传感器（`sensor.*`） |
 | `REACT_APP_HA_INDOOR_HUMIDITY_ENTITY_ID` | 室内湿度传感器（`sensor.*`） |
 | `REACT_APP_HA_INDOOR_PRESSURE_ENTITY_ID` | 室内气压传感器（`sensor.*`） |
 
 不要在代码中硬编码新的 URL、令牌或实体 ID，统一走环境变量。`src/actions/bingWallpaper.js` 中的 `http://start.home.lan:8083/proxy/` 是已知的硬编码例外。
+
+室外天气、室外空气质量与天气预警目前都取自 HA 的 `qweather_pro` 集成：`REACT_APP_HA_WEATHER_ENTITY_ID` 指向该集成的 `weather.*` 实体，`REACT_APP_HA_AIR_QUALITY_ENTITY_ID` 和 `REACT_APP_HA_WEATHER_WARNINGS_ENTITY_ID` 分别指向其配套的 `sensor.*` 实体（早期使用的 `weather.tian_qi` 等实体已不再使用）。
 
 ## 架构
 
@@ -76,8 +80,9 @@ src/registerServiceWorker.js  CRA 默认 service worker
 ### 数据形状与已知细节
 
 - 室外天气组件期望 `state.outdoorWeather.now = { code: '200', now: {...} }`；`code !== '200'` 时不渲染。
-- 室外天气属性使用 `qweather_icon`、`condition_cn`、`windscale` 等 HA 集成字段。
-- 预报接口的响应在 `service_response["weather.tian_qi"].forecast` 下。
+- 室外天气属性使用 `qweather_pro` 集成提供的 `qweather_icon`、`condition_cn`、`wind_dir`、`wind_scale`、`update_time` 等字段；风向代码在 action 中映射为中文名称。
+- 预报接口的响应在 `service_response[REACT_APP_HA_WEATHER_ENTITY_ID].forecast` 下。
+- 室外空气质量读取 `qweather_pro` 传感器的 `aqi_value` / `primary_pollutant` 属性（分级取实体 `state`），天气预警读取其 `text` 属性。
 - 室内 AQI reducer 会把 `unavailable` / `unknown` 视为无效值，保留上一次有效读数并设置 `isStale: true`，组件据此显示离线提示。
 - `src/actions/indoorAirQuality.js` 和 `indoorWeather.js` 的模板中，`LastUpdate` 硬编码读取 `sensor.weatherstation_livingroom_temperature.last_changed`；更换设备时需同步修改。
 - 室内 AQI 使用 `getChinaAqiClassName`（中国 AQI 分级），室外 AQI 在 `AirQuality` 组件中通过 `aqiData` 分支同样使用该分级；`getAqiClassName` 为另一套分级。
