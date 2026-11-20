@@ -4,7 +4,7 @@ export const GET_OUTDOOR_AQI = 'GET_OUTDOOR_AQI';
 // const authKey = process.env.REACT_APP_QWEATHER_API_KEY;
 const apiURL = process.env.REACT_APP_HA_API_URL;
 const haAPIAuthToken = process.env.REACT_APP_HA_API_TOKEN;
-const weatherEntityID= process.env.REACT_APP_HA_WEATHER_ENTITY_ID;
+const airQualityEntityID= process.env.REACT_APP_HA_AIR_QUALITY_ENTITY_ID;
 
 export const getOutdoorAQI = () => {
   return dispatch => {
@@ -19,7 +19,7 @@ export const getOutdoorAQI = () => {
     //     }
     //   })
     // )
-    fetch(`${apiURL}/states/${weatherEntityID}`, {
+    fetch(`${apiURL}/states/${airQualityEntityID}`, {
       method: 'GET',
       // method: 'POST',
       headers: {
@@ -31,15 +31,15 @@ export const getOutdoorAQI = () => {
       results => results.json()
     ).then(
       data => {
-        const { aqi, category, primary } = data.attributes.aqi;
+        const { aqi_value, primary_pollutant } = data.attributes;
         dispatch({ 
           type: GET_OUTDOOR_AQI,
           payload: {
             code: "200",
             now: {
-              aqi,
-              category,
-              primary
+              aqi: aqi_value,
+              category: data.state,
+              primary: primary_pollutant
             }
           }
         })

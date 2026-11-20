@@ -22,11 +22,7 @@ npm test             # CRA/Jest（仅有一个冒烟测试）
 npm run eject        # 不要执行
 ```
 
-注意：`react-scripts` 1.0.13 使用 webpack 3，在 Node 17+ 上可能报 `ERR_OSSL_EVP_UNSUPPORTED`，可用：
-
-```bash
-NODE_OPTIONS=--openssl-legacy-provider npm start
-```
+注意：`react-scripts` 1.0.13 使用 webpack 3，需要较旧的 Node。Node 17+ 构建时可能报 `ERR_OSSL_EVP_UNSUPPORTED`；更新的 Node 已移除 `process.binding('http_parser')`，`spdy`/`http-deceiver` 会在启动时直接抛 `No such module: http_parser`。推荐用 n 或 nvm 安装 Node 14.21.3 后切换使用，并为其安装独立的 yarn 1.x（corepack 提供的 yarn 需要 Node 18+）。
 
 ## 环境变量
 

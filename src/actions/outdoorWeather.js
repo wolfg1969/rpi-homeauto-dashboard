@@ -6,6 +6,36 @@ const apiURL = process.env.REACT_APP_HA_API_URL;
 const haAPIAuthToken = process.env.REACT_APP_HA_API_TOKEN;
 
 const weatherEntityID= process.env.REACT_APP_HA_WEATHER_ENTITY_ID;
+const weatherWarningsEntityID = process.env.REACT_APP_HA_WEATHER_WARNINGS_ENTITY_ID;
+
+// API Document: https://dev.qweather.com/docs/api/weather/wind-guide/
+const windDirectionNames = {
+  n: '北风',
+  nne: '东北偏北风',
+  ne: '东北风',
+  ene: '东北偏东风',
+  e: '东风',
+  ese: '东南偏东风',
+  se: '东南风',
+  sse: '东南偏南风',
+  s: '南风',
+  ssw: '西南偏南风',
+  sw: '西南风',
+  wsw: '西南偏西风',
+  w: '西风',
+  wnw: '西北偏西风',
+  nw: '西北风',
+  nnw: '西北偏北风',
+  none: '无持续风向',
+  vrb: '风向变化不定',
+  rotational: '旋转风',
+};
+
+const getWindDirectionName = windDir => {
+  if (!windDir) return windDir;
+  return windDirectionNames[String(windDir).toLowerCase()] || windDir;
+};
+
 
 export const getOutdoorWeather = () => {
   return dispatch => {
@@ -47,36 +77,45 @@ export const getOutdoorWeather = () => {
       })
     }).then(response => response.json());
 
-    Promise.all([weatherPromise,forecastPromise]).then(
-      ([weatherData, forecastData]) => {
+    const warningsPromise = fetch(
+      `${apiURL}/states/${weatherWarningsEntityID}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${haAPIAuthToken}`,
+        'Content-Type': 'application/json',
+        'Origin': '*'
+      }
+    }).then(response => response.json());
+
+    Promise.all([weatherPromise, forecastPromise, warningsPromise]).then(
+      ([weatherData, forecastData, warningsData]) => {
 
         const { 
           condition_cn: text,
           feels_like: feelsLike,
-          hourly_summary: hourlySummary,
+          // hourly_summary: hourlySummary,
           humidity,
-          last_updated: updateTime,
+          update_time: updateTime,
           minutely_summary: minutelySummary,
           pressure,
           pressure_unit: pressureUnit,
           qweather_icon: icon, 
           temperature: temp,
           temperature_unit: tempUnit,
-          warning,
-          winddir: windDir,
-          windscale: windScale,
+          wind_dir: windDir,
+          wind_scale: windScale,
           wind_bearing: wind360,
           wind_speed: windSpeed
         } = weatherData.attributes;
 
-        const { forecast: daily_forecast } = forecastData.service_response["weather.tian_qi"];
+        const { forecast: daily_forecast } = forecastData.service_response[weatherEntityID];
         let daily_data = [];
         daily_forecast.forEach(item => {
           const {
             text: textDay, 
-            textnight: textNight, 
+            text_night: textNight, 
             icon: iconDay, 
-            iconnight: iconNight,
+            icon_night: iconNight,
             templow: tempMin,
             temperature: tempMax,
           } = item;
@@ -91,6 +130,8 @@ export const getOutdoorWeather = () => {
           })
         });
 
+        const warning = warningsData.attributes.text;
+
         dispatch({ 
           type: GET_OUTDOOR_WEATHER,
           payload: {
@@ -99,7 +140,7 @@ export const getOutdoorWeather = () => {
               now: {
                 feelsLike, 
                 icon,
-                hourlySummary,
+                // hourlySummary,
                 humidity, 
                 minutelySummary,
                 pressure, 
@@ -108,9 +149,9 @@ export const getOutdoorWeather = () => {
                 tempUnit,
                 text,
                 warning,
-                wind360, 
-                windDir, 
-                windScale, 
+                wind360,
+                windDir: getWindDirectionName(windDir),
+                windScale,
                 windSpeed,
                 updateTime
               }

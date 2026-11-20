@@ -29,7 +29,6 @@ class OutdoorWeather extends Component {
             return (
               <div className="cond text-center column col-3">
                 <span className="h1"><i className={`weather-icon qi-${icon}`}></i> </span>
-                {/* <img className="weather-icon" src={weatherIcons[`icon_${icon}`]} alt={text} /> */}
                 <p>{text}</p>
               </div>
             )
@@ -41,23 +40,17 @@ class OutdoorWeather extends Component {
           
             const { humidity, pressure, pressureUnit, temp, tempUnit, feelsLike, windDir, windScale } = nowData;
             
-            const windLevelHigh = windScale.substring(windScale.lastIndexOf('-')+1);
-            
             let unit = '级';
             
-            if (isNaN(parseInt(windLevelHigh, 10))) {
-              unit = '';
-            }
-          
             return (
               <div className="temp column col-9">
                 <p>
-                  <i className="wi wi-thermometer"></i>{temp}<span>{tempUnit}</span> <small>{feelsLike}<span>{tempUnit}</span></small>
+                  <i className="wi wi-thermometer"></i>{temp}<span>{tempUnit}</span> <small>{feelsLike}</small><span>{tempUnit}</span>
                   <i className="wi wi-humidity"></i> {humidity} <span>%</span>
                 </p>
                 <p className="wind">
                   <i className="wi wi-barometer"></i> {pressure} <span>{pressureUnit}</span> 
-                  <i className={`wi wi-wind-beaufort-${windLevelHigh}`}></i> <span>{`${windDir} ${windScale}${unit}`}</span>
+                  <i className={`wi wi-wind-beaufort-${windScale}`}></i> <span>{`${windDir} ${windScale}${unit}`}</span>
                 </p>
               </div>
             )
@@ -67,17 +60,12 @@ class OutdoorWeather extends Component {
         <div className="summary columns col-gapless">
           {
             (() => {
-              const { hourlySummary, minutelySummary, warning } = nowData;
+              const { minutelySummary, warning } = nowData;
             
               return (
                 <div className="column col-12">
                   <small className="summary">{minutelySummary}。</small>
-                  <small className="summary">{hourlySummary}</small>
-                  {
-                    (warning || []).map((item, index) => (
-                      <small className="warning" key={index}>{item.typeName}{item.level}预警。</small>
-                    ))
-                  }
+                  <small className="warning">{warning}</small>
                 </div>
               )
             })()
