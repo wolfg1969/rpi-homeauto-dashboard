@@ -1,4 +1,4 @@
-import { GET_OUTDOOR_AQI } from '../actions/outdoorAirQuality';
+import { GET_OUTDOOR_AQI } from '../actions/outdoorWeather';
 
 const defaultState = {
   Data: '', 

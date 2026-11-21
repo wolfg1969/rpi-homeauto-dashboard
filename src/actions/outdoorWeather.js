@@ -1,12 +1,10 @@
 export const GET_OUTDOOR_WEATHER = 'GET_OUTDOOR_WEATHER';
+export const GET_OUTDOOR_AQI = 'GET_OUTDOOR_AQI';
 
-// const location = process.env.REACT_APP_QWEATHER_LOCATION;
-// const authKey = process.env.REACT_APP_QWEATHER_API_KEY;
 const apiURL = process.env.REACT_APP_HA_API_URL;
 const haAPIAuthToken = process.env.REACT_APP_HA_API_TOKEN;
 
-const weatherEntityID= process.env.REACT_APP_HA_WEATHER_ENTITY_ID;
-const weatherWarningsEntityID = process.env.REACT_APP_HA_WEATHER_WARNINGS_ENTITY_ID;
+const weatherEntityID = process.env.REACT_APP_HA_WEATHER_ENTITY_ID;
 
 // API Document: https://dev.qweather.com/docs/api/weather/wind-guide/
 const windDirectionNames = {
@@ -36,35 +34,12 @@ const getWindDirectionName = windDir => {
   return windDirectionNames[String(windDir).toLowerCase()] || windDir;
 };
 
-
 export const getOutdoorWeather = () => {
   return dispatch => {
-    // API Document: https://dev.qweather.com/docs/api/weather/weather-now/
-    // API Document: https://dev.qweather.com/docs/api/weather/weather-daily-forecast/
-    // Promise.all([
-    //   fetch(`https://devapi.qweather.com/v7/weather/now?location=${location}&key=${authKey}&lang=zh`).then(res => res.json()),
-    //   fetch(`https://devapi.qweather.com/v7/weather/3d?location=${location}&key=${authKey}&lang=zh`).then(res => res.json())
-    // ]).then(([now, dailyForecast]) => {
-    //   dispatch({ 
-    //     type: GET_OUTDOOR_WEATHER,
-    //     payload: {
-    //       now,
-    //       dailyForecast,
-    //     }
-    //   })
-    // })
-    const weatherPromise = fetch(
-      `${apiURL}/states/${weatherEntityID}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${haAPIAuthToken}`,
-        'Content-Type': 'application/json',
-        'Origin': '*'
-      }
-    }).then(response => response.json());
-
-    const forecastPromise = fetch(
-      `${apiURL}/services/weather/get_forecasts?return_response`, {
+    // 室外天气、逐日预报、空气质量与天气预警统一取自 qweather_pro 的 get_weather 服务，
+    // 一次请求同时更新 outdoorWeather 与 outdoorAirQuality 两个数据域。
+    fetch(
+      `${apiURL}/services/qweather_pro/get_weather?return_response`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${haAPIAuthToken}`,
@@ -72,93 +47,85 @@ export const getOutdoorWeather = () => {
         'Origin': '*'
       },
       body: JSON.stringify({
-        entity_id: weatherEntityID,
-        type: 'daily'
+        entity_id: weatherEntityID
       })
-    }).then(response => response.json());
+    }).then(
+      response => response.json()
+    ).then(
+      data => {
+        const serviceResponse = data && data.service_response;
 
-    const warningsPromise = fetch(
-      `${apiURL}/states/${weatherWarningsEntityID}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${haAPIAuthToken}`,
-        'Content-Type': 'application/json',
-        'Origin': '*'
-      }
-    }).then(response => response.json());
+        if (!serviceResponse) {
+          return;
+        }
 
-    Promise.all([weatherPromise, forecastPromise, warningsPromise]).then(
-      ([weatherData, forecastData, warningsData]) => {
-
-        const { 
-          condition_cn: text,
-          feels_like: feelsLike,
-          // hourly_summary: hourlySummary,
-          humidity,
+        const {
+          now: current = {},
+          daily = [],
+          aqi = {},
+          warning: warnings = [],
+          minutely_summary: minutelySummary = '',
           update_time: updateTime,
-          minutely_summary: minutelySummary,
-          pressure,
-          pressure_unit: pressureUnit,
-          qweather_icon: icon, 
-          temperature: temp,
-          temperature_unit: tempUnit,
-          wind_dir: windDir,
-          wind_scale: windScale,
-          wind_bearing: wind360,
-          wind_speed: windSpeed
-        } = weatherData.attributes;
+        } = serviceResponse;
 
-        const { forecast: daily_forecast } = forecastData.service_response[weatherEntityID];
-        let daily_data = [];
-        daily_forecast.forEach(item => {
-          const {
-            text: textDay, 
-            text_night: textNight, 
-            icon: iconDay, 
-            icon_night: iconNight,
-            templow: tempMin,
-            temperature: tempMax,
-          } = item;
-          daily_data.push({
-            textDay, 
-            textNight, 
-            iconDay, 
-            iconNight,
-            tempMin,
-            tempMax,
+        const dailyData = daily.slice(0, 3).map(item => {
+          const daytime = item.daytime || {};
+          const nighttime = item.nighttime || {};
+
+          return {
+            textDay: daytime.text,
+            textNight: nighttime.text,
+            iconDay: daytime.icon,
+            iconNight: nighttime.icon,
+            tempMin: item.temp_min,
+            tempMax: item.temp_max,
             moonPhaseIcon: '',  // unavailable
-          })
+          };
         });
 
-        const warning = warningsData.attributes.text;
+        const warning = warnings
+          .map(item => item.title || item.text)
+          .filter(Boolean)
+          .join('；');
 
-        dispatch({ 
+        dispatch({
           type: GET_OUTDOOR_WEATHER,
           payload: {
             now: {
               code: '200',
               now: {
-                feelsLike, 
-                icon,
-                // hourlySummary,
-                humidity, 
+                feelsLike: current.feelsLike,
+                icon: current.icon,
+                humidity: current.humidity,
                 minutelySummary,
-                pressure, 
-                pressureUnit,
-                temp, 
-                tempUnit,
-                text,
+                pressure: current.pressure,
+                pressureUnit: 'hPa',
+                temp: current.temp,
+                tempUnit: '°C',
+                text: current.text_cn,
                 warning,
-                wind360,
-                windDir: getWindDirectionName(windDir),
-                windScale,
-                windSpeed,
+                wind360: current.wind360,
+                windDir: getWindDirectionName(current.windDir),
+                windScale: current.windScale,
+                windSpeed: current.windSpeed,
                 updateTime
               }
             },
             dailyForecast: {
               code: '200',
-              daily: daily_data.slice(0, 3)
+              daily: dailyData
+            }
+          }
+        });
+
+        dispatch({
+          type: GET_OUTDOOR_AQI,
+          payload: {
+            code: '200',
+            now: {
+              aqi: aqi.aqi,
+              category: aqi.category,
+              primary: aqi.primary
             }
           }
         });

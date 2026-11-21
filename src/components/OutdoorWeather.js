@@ -125,7 +125,7 @@ class OutdoorWeather extends Component {
         
         {
           (() => {
-            const lastUpdate = now.updateTime;
+            const lastUpdate = nowData.updateTime;
             
             return (
               <p className="note">

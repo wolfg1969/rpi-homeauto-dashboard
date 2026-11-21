@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import { getClassSchedule } from './actions/classSchedule';
 import { getIndoorAQI } from './actions/indoorAirQuality';
 import { getIndoorWeather } from './actions/indoorWeather';
-import { getOutdoorAQI } from './actions/outdoorAirQuality';
 import { getOutdoorWeather } from './actions/outdoorWeather';
 import { getBingWallpaper } from './actions/bingWallpaper'
 import { tick } from './actions/clock';
@@ -31,7 +30,6 @@ class App extends Component {
   componentWillMount() {
     this.props.tick();
     this.props.getOutdoorWeather();
-    this.props.getOutdoorAQI();
     this.props.getIndoorAQI();
     this.props.getIndoorWeather();
     this.props.getClassSchedule();
@@ -40,7 +38,7 @@ class App extends Component {
   
   componentDidMount() {
     setInterval(() => this.props.tick(), 1000);  // every second
-    setInterval(() => this.props.getOutdoorAQI(), 1000 * 60 * 30); // every 30 minutes
+    // 室外天气与室外空气质量由同一次 qweather_pro.get_weather 调用更新
     setInterval(() => this.props.getOutdoorWeather(), 1000 * 60 * 30); // every 30 minutes
     setInterval(() => this.props.getIndoorAQI(), 1000 * 60 * 5); // every 5 minutes
     setInterval(() => this.props.getIndoorWeather(), 1000 * 60 * 5); // every 5 minutes
@@ -187,7 +185,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     tick: () => dispatch(tick()),
     getOutdoorWeather: () => dispatch(getOutdoorWeather()),
-    getOutdoorAQI: () => dispatch(getOutdoorAQI()),
     getIndoorAQI: () => dispatch(getIndoorAQI()),
     getIndoorWeather: () => dispatch(getIndoorWeather()),
     getClassSchedule: () => dispatch(getClassSchedule()),
