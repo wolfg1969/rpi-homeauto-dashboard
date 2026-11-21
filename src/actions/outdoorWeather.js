@@ -38,7 +38,7 @@ export const getOutdoorWeather = () => {
   return dispatch => {
     // 室外天气、逐日预报、空气质量与天气预警统一取自 qweather_pro 的 get_weather 服务，
     // 一次请求同时更新 outdoorWeather 与 outdoorAirQuality 两个数据域。
-    fetch(
+    return fetch(
       `${apiURL}/services/qweather_pro/get_weather?return_response`, {
       method: 'POST',
       headers: {

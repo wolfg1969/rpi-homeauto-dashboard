@@ -6,7 +6,7 @@ const bingWallpaperProxyURL = process.env.REACT_APP_BING_WALLPAPER_PROXY_URL || 
 export const getBingWallpaper = () => {
   return dispatch => {
 
-    fetch(`${bingWallpaperProxyURL}HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN`, {
+    return fetch(`${bingWallpaperProxyURL}HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN`, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-cache',

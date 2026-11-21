@@ -57,12 +57,14 @@ src/registerServiceWorker.js  CRA 默认 service worker
 
 ### 数据流与轮询
 
-`App.js` 在 `componentWillMount` 中发起首次加载，在 `componentDidMount` 中设置定时器：
+`App.js` 在 `componentDidMount` 中发起首次加载，并用一个每秒的调度器统一驱动时钟与数据轮询。页面隐藏（`document.hidden`）时暂停，恢复可见时立即补跑过期任务；`online` 事件会重置所有任务并立即重试。卸载时会清理定时器和事件监听。
 
 - 时钟：每 1 秒（`CLOCK_TICK` 被 redux-logger 过滤，不打印）
 - 室内空气质量 / 室内天气：每 5 分钟（由 `getIndoorWeather` 的一次 `template` 调用同时更新）
 - 室外空气质量 / 室外天气：每 30 分钟（由 `getOutdoorWeather` 的一次 `get_weather` 调用同时更新）
 - Bing 壁纸：每 12 小时
+
+各任务按“上次开始时间 + 周期”调度，并通过 `inflight` 标记避免慢请求重叠。新增轮询任务时，在 `App.js` 的 `scheduledTasks` 中登记即可，action 应返回 fetch 的 Promise。
 
 ### HA REST API 用法
 

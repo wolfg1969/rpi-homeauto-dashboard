@@ -16,35 +16,42 @@ import { tick } from './actions/clock';
 
 const apiURL = process.env.REACT_APP_HA_API_URL;
 
+// 由每秒的调度器统一驱动，页面隐藏时暂停，恢复可见或网络恢复时补跑。
+const scheduledTasks = [
+  { key: 'outdoor', interval: 1000 * 60 * 30, action: 'getOutdoorWeather' }, // every 30 minutes
+  { key: 'indoor', interval: 1000 * 60 * 5, action: 'getIndoorWeather' },    // every 5 minutes
+  { key: 'wallpaper', interval: 1000 * 60 * 60 * 12, action: 'getBingWallpaper' }, // every 12 hours
+];
+
 class App extends Component {
 
   constructor(props) {
     super(props);
     this.state = { scale: 1 };
     this.appEl = null;
+    this.timers = [];
+    this.nextRun = {};
+    this.inflight = {};
     this.setAppRef = this.setAppRef.bind(this);
     this.measureScale = this.measureScale.bind(this);
+    this.runScheduler = this.runScheduler.bind(this);
+    this.handleVisibilityChange = this.handleVisibilityChange.bind(this);
+    this.handleOnline = this.handleOnline.bind(this);
   }
 
-  componentWillMount() {
-    this.props.tick();
-    this.props.getOutdoorWeather();
-    this.props.getIndoorWeather();
-    this.props.getClassSchedule();
-    this.props.getBingWallpaper();
-  }
-  
   componentDidMount() {
-    setInterval(() => this.props.tick(), 1000);  // every second
-    // 室外天气与室外空气质量由同一次 qweather_pro.get_weather 调用更新
-    setInterval(() => this.props.getOutdoorWeather(), 1000 * 60 * 30); // every 30 minutes
-    // 室内天气与室内空气质量由同一次 template 调用更新
-    setInterval(() => this.props.getIndoorWeather(), 1000 * 60 * 5); // every 5 minutes
-    // setInterval(() => this.props.getClassSchedule(), 1000 * 60 * 45); // every 45 minutes
-    setInterval(() => this.props.getBingWallpaper(), 1000 * 60 * 60 * 12); // every 12 hours
+    this.props.getClassSchedule();
+
+    // 首次加载不受页面可见性影响。
+    this.props.tick();
+    this.runDueTasks(true);
+
+    this.timers.push(setInterval(this.runScheduler, 1000));
 
     this.measureScale();
     window.addEventListener('resize', this.measureScale);
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    window.addEventListener('online', this.handleOnline);
     if (this.appEl && typeof window.ResizeObserver !== 'undefined') {
       this.resizeObserver = new window.ResizeObserver(this.measureScale);
       this.resizeObserver.observe(this.appEl);
@@ -56,10 +63,65 @@ class App extends Component {
   }
 
   componentWillUnmount() {
+    this.timers.forEach(timer => clearInterval(timer));
+    this.timers = [];
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    window.removeEventListener('online', this.handleOnline);
     window.removeEventListener('resize', this.measureScale);
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
+  }
+
+  // 每秒执行：更新时钟，并补跑已到期的数据请求。
+  runScheduler() {
+    if (document.hidden) {
+      return;
+    }
+
+    this.props.tick();
+    this.runDueTasks(false);
+  }
+
+  runDueTasks(force) {
+    const now = Date.now();
+
+    scheduledTasks.forEach(task => {
+      if (this.inflight[task.key]) {
+        return;
+      }
+
+      if (!force && this.nextRun[task.key] && now < this.nextRun[task.key]) {
+        return;
+      }
+
+      this.startTask(task);
+    });
+  }
+
+  startTask(task) {
+    this.inflight[task.key] = true;
+    this.nextRun[task.key] = Date.now() + task.interval;
+
+    const done = () => {
+      this.inflight[task.key] = false;
+    };
+
+    // 请求结束（无论成功失败）后才解除占用，避免慢请求叠加。
+    Promise.resolve(this.props[task.action]()).then(done, done);
+  }
+
+  // 从后台/休眠恢复时立即刷新时钟和过期数据。
+  handleVisibilityChange() {
+    if (!document.hidden) {
+      this.runScheduler();
+    }
+  }
+
+  // 网络恢复后立即重试所有数据域。
+  handleOnline() {
+    this.nextRun = {};
+    this.runScheduler();
   }
 
   setAppRef(el) {

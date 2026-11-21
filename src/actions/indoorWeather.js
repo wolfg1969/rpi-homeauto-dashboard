@@ -13,7 +13,7 @@ export const getIndoorWeather = () => {
   return dispatch => {
 
     // 室内天气与室内空气质量共用一次 template 渲染，同时更新两个数据域。
-    fetch(`${apiURL}/template`, {
+    return fetch(`${apiURL}/template`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${haAPIAuthToken}`,
