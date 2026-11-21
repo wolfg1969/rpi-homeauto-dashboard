@@ -60,7 +60,7 @@ src/registerServiceWorker.js  CRA 默认 service worker
 `App.js` 在 `componentWillMount` 中发起首次加载，在 `componentDidMount` 中设置定时器：
 
 - 时钟：每 1 秒（`CLOCK_TICK` 被 redux-logger 过滤，不打印）
-- 室内空气质量 / 室内天气：每 5 分钟
+- 室内空气质量 / 室内天气：每 5 分钟（由 `getIndoorWeather` 的一次 `template` 调用同时更新）
 - 室外空气质量 / 室外天气：每 30 分钟（由 `getOutdoorWeather` 的一次 `get_weather` 调用同时更新）
 - Bing 壁纸：每 12 小时
 
@@ -69,7 +69,7 @@ src/registerServiceWorker.js  CRA 默认 service worker
 | 用途 | 请求 |
 | --- | --- |
 | 读取实体状态 | `GET {apiURL}/states/{entity_id}` |
-| 模板渲染（室内温湿度/气压/AQI） | `POST {apiURL}/template`，body 为 `{ "template": "..." }` |
+| 模板渲染（室内温湿度/气压/AQI） | `POST {apiURL}/template`，body 为 `{ "template": "..." }`，一次渲染同时返回室内天气与 AQI |
 | 室外天气/预报/空气质量/预警 | `POST {apiURL}/services/qweather_pro/get_weather?return_response`，body 为 `{ "entity_id": "weather.*" }` |
 | 灯光控制 | `POST {apiURL}/webhook/{hook_name}`（`turn_off_all_lights`、`toggle_door_light`） |
 
@@ -83,7 +83,7 @@ src/registerServiceWorker.js  CRA 默认 service worker
 - 室外空气质量取 `service_response.aqi` 的 `aqi` / `category` / `primary`；天气预警取 `service_response.warning` 数组的 `title`（无标题时回退 `text`）。
 - `getOutdoorWeather` 一次请求会同时 dispatch `GET_OUTDOOR_WEATHER` 和 `GET_OUTDOOR_AQI`，两个 reducer 分别保存各自的 state。
 - 室内 AQI reducer 会把 `unavailable` / `unknown` 视为无效值，保留上一次有效读数并设置 `isStale: true`，组件据此显示离线提示。
-- `src/actions/indoorAirQuality.js` 和 `indoorWeather.js` 的模板中，`LastUpdate` 硬编码读取 `sensor.weatherstation_livingroom_temperature.last_changed`；更换设备时需同步修改。
+- `src/actions/indoorWeather.js` 的模板同时渲染温度、湿度、气压和室内 AQI，并 dispatch `GET_INDOOR_WEATHER` 与 `GET_INDOOR_AQI` 两个 action。AQI 数据位于模板返回的 `aqi` 对象中（`aqi.Data` / `aqi.lastUpdate`），其时间取 AQI 实体自身的 `last_changed`；天气的 `LastUpdate` 取温度实体（`REACT_APP_HA_INDOOR_TEMPERATURE_ENTITY_ID`）的 `last_changed`。
 - 室内 AQI 使用 `getChinaAqiClassName`（中国 AQI 分级），室外 AQI 在 `AirQuality` 组件中通过 `aqiData` 分支同样使用该分级；`getAqiClassName` 为另一套分级。
 - `App.js` 中 `ClassSchedule` 的渲染已被注释掉，相关 action/reducer/组件仍保留。
 

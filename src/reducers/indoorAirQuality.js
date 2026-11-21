@@ -1,4 +1,4 @@
-import { GET_INDOOR_AQI } from '../actions/indoorAirQuality';
+import { GET_INDOOR_AQI } from '../actions/indoorWeather';
 
 const defaultState = {
   Data: '',
